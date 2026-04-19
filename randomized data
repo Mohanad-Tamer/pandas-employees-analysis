@@ -1,0 +1,83 @@
+import json
+import random
+
+def generate_employee_data(num_rows=100, num_duplicates=4, output_file="employees.json"):
+    
+    names = [
+        "Ahmed Hassan","Sara Ali","Omar Khaled","Mona Youssef","Karim Adel",
+        "Nour Ibrahim","Youssef Samir","Laila Mostafa","Hassan Tarek","Dina Magdy"
+    ]
+    
+    departments = ["HR", "IT", "Finance", "Sales", "Marketing"]
+    
+    addresses = [
+        "Cairo","Giza","Alexandria","Mansoura","Tanta","Aswan","Luxor","Suez","Ismailia","Fayoum"
+    ]
+    
+    data = []
+    manager_ids_by_dept = {}
+
+    current_id = 1
+
+    # Step 1: Create managers (4 per department)
+    for dept in departments:
+        manager_ids_by_dept[dept] = []
+        
+        for _ in range(4):
+            employee = {
+                "id": current_id,
+                "name": random.choice(names),
+                "age": random.randint(30, 55),
+                "department": dept,
+                "manager": "yes",
+                "managed_by": None,  # top-level manager
+                "salary": random.choice([random.randint(15000, 40000), None]),  # includes NA
+                "revenue": random.randint(50000, 200000) if dept == "Sales" else None,
+                "address": random.choice(addresses),
+                "postal_code": random.randint(10000, 99999)
+            }
+            
+            manager_ids_by_dept[dept].append(current_id)
+            data.append(employee)
+            current_id += 1
+
+    # Step 2: Create remaining employees
+    while len(data) < num_rows:
+        dept = random.choice(departments)
+        manager_id = random.choice(manager_ids_by_dept[dept])
+        
+        employee = {
+            "id": current_id,
+            "name": random.choice(names),
+            "age": random.randint(20, 50),
+            "department": dept,
+            "manager": "no",
+            "managed_by": manager_id,
+            "salary": random.choice([random.randint(5000, 20000), None]),  # includes NA
+            "revenue": random.randint(10000, 100000) if dept == "Sales" else None,
+            "address": random.choice(addresses),
+            "postal_code": random.randint(10000, 99999)
+        }
+        
+        data.append(employee)
+        current_id += 1
+
+    # Step 3: Add FULL duplicates (copy-paste exactly)
+    duplicates = random.sample(data, num_duplicates)
+    
+    for dup in duplicates:
+        data.append(dup.copy())  # exact duplicate (same ID too)
+
+    # Save to JSON
+    with open(output_file, "w") as f:
+        json.dump(data, f, indent=4)
+
+    # Step 4: Execution check
+    if len(data) >= num_rows:
+        print("✅ Execution successful")
+    else:
+        print("❌ Execution failed")
+
+
+# Run function
+generate_employee_data()
