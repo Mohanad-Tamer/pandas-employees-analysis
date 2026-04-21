@@ -45,11 +45,15 @@ sum_salaries=dataframe.groupby("department")["salary"].sum().reset_index()
 max_salary=dataframe.groupby("department")["salary"].max().reset_index()
 
 
-report = {
-    "total_salaries": total_salaries,
-    "sum_salaries_by_department": sum_salaries.to_dict(orient="records"),
-    "max_salary_by_department": max_salary.to_dict(orient="records")
-}
 
-pd.Series(report).to_json("salaries_report.json",indent=4)
+with pd.ExcelWriter("salaries_report.xlsx") as writer:
+
+    pd.DataFrame({
+        "metric": ["total_salaries"],
+        "value": [total_salaries]
+    }).to_excel(writer, sheet_name="summary", index=False)
+
+    sum_salaries.to_excel(writer, sheet_name="sum by department", index=False)
+
+    max_salary.to_excel(writer, sheet_name="max salary in each dep", index=False)
 
