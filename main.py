@@ -40,20 +40,17 @@ dataframe["salary"]=pd.to_numeric(dataframe["salary"],errors="coerce")#don't cra
 
 total_salaries = dataframe["salary"].sum()
 
-sum_salaries=dataframe.groupby("department")["salary"].sum().reset_index()
-
-max_salary=dataframe.groupby("department")["salary"].max().reset_index()
 
 
 
-with pd.ExcelWriter("salaries_report.xlsx") as writer:
+with pd.ExcelWriter("salaries_report.xlsx", engine="openpyxl") as writer:
 
+    # summary
     pd.DataFrame({
         "metric": ["total_salaries"],
         "value": [total_salaries]
     }).to_excel(writer, sheet_name="summary", index=False)
 
-    sum_salaries.to_excel(writer, sheet_name="sum by department", index=False)
-
-    max_salary.to_excel(writer, sheet_name="max salary in each dep", index=False)
-
+    # group by department
+    for dept, group in dataframe.groupby("department"):
+        group.to_excel(writer, sheet_name=str(dept), index=False)
