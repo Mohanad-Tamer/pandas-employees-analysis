@@ -31,7 +31,7 @@ def generate_employee_data(num_rows=100, num_duplicates=4, output_file="employee
                 "department": dept,
                 "manager": "yes",
                 "managed_by": None,  # top-level manager
-                "salary": random.choice([random.randint(15000, 40000), None]),  # includes NA
+                  "salary": random.randint(15000, 40000),
                 "revenue": random.randint(50000, 200000) if dept == "Sales" else None,
                 "address": random.choice(addresses),
                 "postal_code": random.randint(10000, 99999)
